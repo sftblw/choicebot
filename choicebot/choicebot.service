@@ -1,0 +1,12 @@
+﻿[Unit]
+Description=choicebot for mastodon
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/dotnet /home/ch/apps/choicebot/serve/choicebot.dll
+WorkingDirectory=/home/ch/apps/choicebot/serve
+User=ch
+
+[Install]
+WantedBy=multi-user.target

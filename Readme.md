@@ -13,7 +13,7 @@ see in action: [@choicebot@twingyeo.kr](https://twingyeo.kr/@choicebot)
 1. install .net core 2.1 or above (arch: `pacman -S dotnet-sdk`)
 2. cd to `./choicebot`
 3. build: `dotnet build --output ./serve -c Release`
-4. first run: `dotnet ./serve/choicebot.dll` (this time there's no ID/PW login)
+4. cd to `./serve`, first run: `dotnet ./choicebot.dll` (this time there's no ID/PW login)
 
 ### 2. as a systemd Service
 

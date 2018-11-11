@@ -4,7 +4,7 @@ Simple choicbot for mastodon with dotnet core, C#.
 
 간단한 선택봇입니다.
 
-see in action: [@choicebot@twingyeo.kr](https://twingyeo.kr/@choicebot)
+see in action: <a href="https://twingyeo.kr/@choicebot" rel="me">@choicebot on @twingyeo.kr</a>
 
 ## installation
 

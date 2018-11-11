@@ -82,10 +82,13 @@ namespace choicebot
         {
             var mentions = status.Mentions.Aggregate<Mention, string>("", (str, mention) =>
             {
+                if (mention.AccountName == botUserInfo.AccountName
+                || mention.AccountName == status.Account.AccountName) { return str; }
+
                 return str + $" @{mention.AccountName}";
             });
 
-            var replyContent = $"{mentions} {replyText}";
+            var replyContent = $"@{status.Account.AccountName} {mentions} {replyText}";
 
             await mastoClient.PostStatus(replyContent, Visibility.Unlisted, status.Id);
         }

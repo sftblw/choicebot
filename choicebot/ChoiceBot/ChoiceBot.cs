@@ -47,10 +47,11 @@ namespace choicebot
 
         private async Task ProcessStatus(Status status)
         {
-            if (status.Mentions.Any(
+            if (status?.Mentions?.Any(
                 (mention) =>
                     mention.AccountName == botUserInfo.AccountName
                     && status.Account.AccountName != botUserInfo.AccountName)
+                    == true
             )
             {
                 string statusText = ParseStatusText(status);

@@ -47,7 +47,6 @@ namespace choicebot
 
         private async Task ProcessStatus(Status status)
         {
-            Console.WriteLine(status.Content);
             if (status.Mentions.Any(
                 (mention) =>
                     mention.AccountName == botUserInfo.AccountName
@@ -94,7 +93,9 @@ namespace choicebot
         private static string ParseStatusText(Status status)
         {
             // strip out html https://stackoverflow.com/a/286825/4394750
-            string statusText = new Regex("<[^>]*>").Replace(status.Content, "");
+            string statusText = status.Content;
+            statusText = statusText.Replace("<br />", "\r\n").Replace("<br/>", "\r\n");
+            statusText = new Regex("<[^>]*>").Replace(statusText, "");
 
             statusText = new Regex("\\@[^\r\n ]+").Replace(statusText, "").Trim();
             return statusText;

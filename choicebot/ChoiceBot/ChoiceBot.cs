@@ -80,15 +80,13 @@ namespace choicebot
 
         private async Task ReplyWithText(Status status, string replyText)
         {
-            var mentions = status.Mentions.Aggregate<Mention, string>("", (str, mention) =>
-            {
-                if (mention.AccountName == botUserInfo.AccountName
-                || mention.AccountName == status.Account.AccountName) { return str; }
+            var mentions = from mention in status.Mentions
+                               where !(mention.AccountName == botUserInfo.AccountName || mention.AccountName == status.Account.AccountName)
+                               select $"@{mention.AccountName}";
 
-                return str + $" @{mention.AccountName}";
-            });
+            var mentionsText = $"@{status.Account.AccountName} {string.Join(' ', mentions)}";
 
-            var replyContent = $"@{status.Account.AccountName} {mentions} {replyText}";
+            var replyContent = $"{mentionsText} {replyText}";
 
             await mastoClient.PostStatus(replyContent, Visibility.Unlisted, status.Id);
         }

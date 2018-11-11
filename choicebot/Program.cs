@@ -10,14 +10,25 @@ namespace choicebot
 {
     class Program
     {
+        static MastodonClient client = null;
+        static string exceptionMessage = "[!] 예외가 발생하였습니다.\r\n@sftblw@twingyeo.kr";
+
         static void Main(string[] args)
         {
+            System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Execute().Wait();
+        }
+
+        private async static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Console.WriteLine(e);
+            await client.PostStatus(exceptionMessage, Visibility.Unlisted);
         }
 
         private async static Task Execute()
         {
             var mastoClient = await PrepareClient();
+            client = mastoClient;
 
             await StartStreaming(mastoClient);
         }

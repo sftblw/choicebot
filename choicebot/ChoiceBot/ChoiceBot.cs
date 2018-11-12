@@ -82,7 +82,7 @@ namespace choicebot
                     return;
                 }
 
-                var selection = selectable[rand.Next() % selectable.Count()].Trim();
+                var selection = selectable[rand.Next(selectable.Count())].Trim();
                 await ReplyWithText(status, selection);
             }
         }

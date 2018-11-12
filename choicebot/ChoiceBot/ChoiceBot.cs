@@ -64,14 +64,22 @@ namespace choicebot
 
                 string[] selectable = null;
 
-                string[] vsSeparator = new string[] { " vs. ", " vs ", " Vs. ", " Vs ", " VS. ", " VS " };
-                if (vsSeparator.Any((sep) => statusText.Contains(sep)))
+                const string vsSepRegexStr = "((^|[ \r\n]+)([Vv][Ss]\\.?)(($|[ \r\n]+)([Vv][Ss]\\.?))*($|[ \r\n]+))";
+                
+                if (Regex.IsMatch(statusText, vsSepRegexStr, RegexOptions.ExplicitCapture | RegexOptions.Compiled))
                 {
-                    selectable = statusText.Split(vsSeparator, 999, StringSplitOptions.RemoveEmptyEntries);
+                    selectable = Regex.Split(statusText, vsSepRegexStr, RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+                    selectable = selectable.Where(item => !string.IsNullOrWhiteSpace(item)).Select(item => item.Trim()).ToArray();
                 }
                 else
                 {
-                    selectable = statusText.Split(new char[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    selectable = statusText?.Split(new char[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                }
+
+                if (selectable.Count() == 0)
+                {
+                    await ReplyWithText(status, helpText);
+                    return;
                 }
 
                 var selection = selectable[rand.Next() % selectable.Count()].Trim();
@@ -85,7 +93,7 @@ namespace choicebot
                                where !(mention.AccountName == botUserInfo.AccountName || mention.AccountName == status.Account.AccountName)
                                select $"@{mention.AccountName}";
 
-            var mentionsText = $"@{status.Account.AccountName} {string.Join(' ', mentions)}";
+            var mentionsText = $"@{status.Account.AccountName} {string.Join(' ', mentions)}".Trim();
 
             var replyContent = $"{mentionsText} {replyText}";
 

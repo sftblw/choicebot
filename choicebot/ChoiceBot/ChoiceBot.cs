@@ -15,6 +15,13 @@ namespace choicebot
         private MastodonClient mastoClient;
         private Account botUserInfo = null;
 
+        private BotPrivacyOption BotPrivacyOption = new BotPrivacyOption()
+        {
+            PreserveContentWarning = false, // TODO
+            VisibilityLimit = BotVisibilityLimit.LimitOpenness,
+            TargetVisibility = Visibility.Unlisted
+        };
+
         public string helpText = "선택할 대상이 없습니다. 선택할 대상을 공백이나 vs(우선)로 구분해서 보내주세요. 골뱅이로 시작하는 내용은 무시됩니다.";
 
         public ChoiceBot(MastodonClient client)
@@ -89,7 +96,7 @@ namespace choicebot
 
             var replyContent = $"{mentionsText} {replyText}";
 
-            await mastoClient.PostStatus(replyContent, Visibility.Unlisted, status.Id);
+            await mastoClient.PostStatus(replyContent, BotPrivacyOption.ToBotVisibility(status.Visibility), status.Id);
         }
 
         private static string ParseStatusText(Status status)

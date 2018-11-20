@@ -100,9 +100,9 @@ namespace choicebot
                 diceNum = int.Parse(diceNumStr);
                 if (diceNum <= 1) { throw new ArgumentException("diceNum is less than 1"); }
             }
-            catch
+            catch (Exception ex)
             {
-                await _ReplyWithText(status, diceErrorMsg);
+                await _ReplyWithText(status, diceErrorMsg + "\r\n\r\n" + $"에러 메시지: {ex.Message}");
             }
 
             string diceReplyStr = $"{rand.Next(1, diceNum)} ({diceNum}면체 주사위)";

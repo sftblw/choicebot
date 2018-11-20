@@ -23,7 +23,7 @@ namespace choicebot
             TargetVisibility = Visibility.Unlisted
         };
 
-        public string helpText = "선택할 대상이 없습니다. 선택할 대상을 공백이나 vs(우선)로 구분해서 보내주세요. 골뱅이로 시작하는 내용은 무시됩니다.";
+        public string helpText = "선택할 대상이 없습니다. 선택할 대상을 공백이나 vs(우선)로 구분해서 보내주세요. 골뱅이로 시작하는 내용은 무시됩니다.\r\n\r\nd20 처럼 보내시면 주사위로 인식합니다.";
 
         public ChoiceBot(MastodonClient client)
         {

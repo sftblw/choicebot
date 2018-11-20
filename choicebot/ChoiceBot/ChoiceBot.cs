@@ -103,6 +103,7 @@ namespace choicebot
             catch (Exception ex)
             {
                 await _ReplyWithText(status, diceErrorMsg + "\r\n\r\n" + $"에러 메시지: {ex.Message}");
+                return;
             }
 
             string diceReplyStr = $"{rand.Next(1, diceNum)} ({diceNum}면체 주사위)";

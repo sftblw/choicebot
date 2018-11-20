@@ -66,36 +66,81 @@ namespace choicebot
 
                 if (string.IsNullOrWhiteSpace(statusText))
                 {
-                    await ReplyWithText(status, helpText);
+                    await ResponseHelp(status);
                     return;
                 }
 
-                string[] selectable = null;
+                string[] selectable = ParseToSelectableItems(statusText);
 
-                const string vsSepRegexStr = "((^|[ \r\n]+)([Vv][Ss]\\.?)(($|[ \r\n]+)([Vv][Ss]\\.?))*($|[ \r\n]+))";
-                
-                if (Regex.IsMatch(statusText, vsSepRegexStr, RegexOptions.ExplicitCapture | RegexOptions.Compiled))
+                // TODO: refactor to middleware-like structure
+                if (selectable.Count() == 0)
                 {
-                    selectable = Regex.Split(statusText, vsSepRegexStr, RegexOptions.ExplicitCapture | RegexOptions.Compiled);
-                    selectable = selectable.Where(item => !string.IsNullOrWhiteSpace(item)).Select(item => item.Trim()).ToArray();
+                    await ResponseHelp(status);
+                }
+                // for now, support only one dice
+                else if (selectable.Count() == 1 && Regex.IsMatch(selectable[0].Trim(), "[dD][0-9]+"))
+                {
+                    await ResponseDice(status, selectable[0].Trim());
                 }
                 else
                 {
-                    selectable = statusText?.Split(new char[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    await ResponseChoice(status, selectable);
                 }
-
-                if (selectable.Count() == 0)
-                {
-                    await ReplyWithText(status, helpText);
-                    return;
-                }
-
-                var selection = selectable[rand.Next(selectable.Count())].Trim();
-                await ReplyWithText(status, selection);
             }
         }
 
-        private async Task ReplyWithText(Status status, string replyText)
+        private async Task ResponseDice(Status status, string diceExpression)
+        {
+            const string diceErrorMsg = "주사위 숫자를 확인할 수 없습니다. 숫자가 1보다 큰지 확인해보세요.";
+
+            string diceNumStr = Regex.Match(diceExpression.Trim(), "[dD]([0-9]+)").Groups[1].Value;
+            int diceNum = 0;
+
+            try { 
+                diceNum = int.Parse(diceNumStr);
+                if (diceNum <= 1) { throw new ArgumentException("diceNum is less than 1"); }
+            }
+            catch
+            {
+                await _ReplyWithText(status, diceErrorMsg);
+            }
+
+            string diceReplyStr = $"{rand.Next(1, diceNum)} ({diceNum}면체 주사위)";
+
+            await _ReplyWithText(status, diceReplyStr);
+        }
+
+        private async Task ResponseChoice(Status status, string[] selectable)
+        {
+            var selection = selectable[rand.Next(selectable.Count())].Trim();
+            await _ReplyWithText(status, selection);
+        }
+
+        private async Task ResponseHelp(Status status)
+        {
+            await _ReplyWithText(status, helpText);
+        }
+
+        private static string[] ParseToSelectableItems(string statusText)
+        {
+            string[] selectable = null;
+
+            const string vsSepRegexStr = "((^|[ \r\n]+)([Vv][Ss]\\.?)(($|[ \r\n]+)([Vv][Ss]\\.?))*($|[ \r\n]+))";
+
+            if (Regex.IsMatch(statusText, vsSepRegexStr, RegexOptions.ExplicitCapture | RegexOptions.Compiled))
+            {
+                selectable = Regex.Split(statusText, vsSepRegexStr, RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+                selectable = selectable.Where(item => !string.IsNullOrWhiteSpace(item)).Select(item => item.Trim()).ToArray();
+            }
+            else
+            {
+                selectable = statusText?.Split(new char[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            return selectable;
+        }
+
+        private async Task _ReplyWithText(Status status, string replyText)
         {
             var mentions = from mention in status.Mentions
                                where !(mention.AccountName == botUserInfo.AccountName || mention.AccountName == status.Account.AccountName)

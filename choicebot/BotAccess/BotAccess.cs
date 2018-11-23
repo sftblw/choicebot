@@ -1,18 +1,15 @@
 ﻿using Mastonet;
 using Mastonet.Entities;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections.Generic;
 
-namespace choicebot
+namespace choicebot.BotAccess
 {
     public class BotAccess
     {
-        [JsonProperty(propertyName: "app_registration", Required = Required.Always)]
+        [JsonProperty("app_registration", Required = Required.Always)]
         internal AppRegistration appRegistration;
 
-        [JsonProperty(propertyName: "auth", Required = Required.Always)]
+        [JsonProperty("auth", Required = Required.Always)]
         internal Auth botAuth;
 
         public BotAccess(AppRegistration appRegistration, Auth botAuth)

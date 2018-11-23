@@ -1,65 +1,60 @@
 ﻿using Mastonet;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Mastonet.Entities;
+using choicebot.BotAccess;
 
 namespace choicebot
 {
-    class Program
+    public static class Program
     {
-        static MastodonClient client = null;
-        static string exceptionMessage = "[!] 예외가 발생하였습니다.\r\n@sftblw@twingyeo.kr";
+        private static MastodonClient _client;
+        private const string ExceptionMessage = "[!] 예외가 발생하였습니다.\r\n@sftblw@twingyeo.kr";
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Execute().Wait();
         }
 
-        private async static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static async void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Console.WriteLine(e);
-            await client.PostStatus(exceptionMessage, Visibility.Unlisted);
+            await _client.PostStatus(ExceptionMessage, Visibility.Unlisted);
         }
 
-        private async static Task Execute()
+        private static async Task Execute()
         {
-            var mastoClient = await PrepareClient();
-            client = mastoClient;
+            MastodonClient mastoClient = await PrepareClient();
+            _client = mastoClient;
 
             await StartStreaming(mastoClient);
         }
 
         private static async Task StartStreaming(MastodonClient mastoClient)
         {
-            Account botUserInfo = await mastoClient.GetCurrentUser();
-
             Console.WriteLine("choicebot running...");
 
-            await new ChoiceBot(mastoClient).Start();
+            await new ChoiceBot.ChoiceBot(mastoClient).Start();
         }
 
-        private async static Task<MastodonClient> PrepareClient()
+        private static async Task<MastodonClient> PrepareClient()
         {
-            const string clientPath = "./.config/configbotAccess.json";
+            const string clientPath = "./.config/botAccessConfig.json";
 
             var persistent = new BotAccessPersistent(clientPath);
 
-            MastodonClient client = (await persistent.Load())?.AsMastodonClient();
+            MastodonClient preparedClient = (await persistent.Load())?.AsMastodonClient();
 
-            if (client == null) {
-                BotAccess access = await BotAccessCreator.InteractiveConsoleRegister();
+            if (preparedClient == null) {
+                BotAccess.BotAccess access = await BotAccessCreator.InteractiveConsoleRegister();
                 if (access != null) { await persistent.Save(access); }
 
-                client = access?.AsMastodonClient();
+                preparedClient = access?.AsMastodonClient();
             }
 
-            if (client == null) { throw new Exception("client is null. somehow failed to create mastodon client."); }
+            if (preparedClient == null) { throw new Exception("client is null. somehow failed to create mastodon client."); }
 
-            return client;
+            return preparedClient;
         }
 
         // not working and not needed but backup purposed

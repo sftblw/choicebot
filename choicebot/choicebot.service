@@ -6,7 +6,8 @@ After=network-online.target
 [Service]
 ExecStart=/usr/bin/dotnet /home/ch/apps/choicebot/choicebot/serve/choicebot.dll
 WorkingDirectory=/home/ch/apps/choicebot/choicebot/serve
-User=ch
+User=choicebot
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

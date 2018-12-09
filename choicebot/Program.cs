@@ -2,6 +2,8 @@
 using System;
 using System.Threading.Tasks;
 using choicebot.BotAccess;
+using choicebot.BotCommon;
+using choicebot.ChoiceBotNS;
 
 namespace choicebot
 {
@@ -34,7 +36,9 @@ namespace choicebot
         {
             Console.WriteLine("choicebot running...");
 
-            await new ChoiceBot.ChoiceBot(mastoClient).Start();
+            var botManager = new BotManager(mastoClient);
+            botManager.AddBot<ChoiceBot>();
+            await botManager.Start();
         }
 
         private static async Task<MastodonClient> PrepareClient()

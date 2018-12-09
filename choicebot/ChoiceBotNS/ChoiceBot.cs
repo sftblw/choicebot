@@ -14,7 +14,10 @@ namespace choicebot.ChoiceBotNS
     {
         private readonly Random _rand = new Random();
 
-        private const string HelpText = "선택할 대상이 없습니다. 선택할 대상을 공백이나 vs(우선)로 구분해서 보내주세요. 골뱅이로 시작하는 내용은 무시됩니다.\r\n\r\nd20 처럼 보내시면 주사위로 인식합니다.";
+        private const string HelpText = "선택할 게 없는 것 같습니다. 이렇게 해보세요:\r\n\r\n"
+            + "- 선택: 공백이나 vs로 구분해서 보내주세요\r\n"
+            + "- 주사위: (주사위 개수)d(주사위 숫자) 를 보내주세요 (예: d5 2d10 등)\r\n"
+            + "- 예아니오: 끝에 예아니오를 적어서 포함해서 보내주세요\r\n";
 
         public override IEnumerable<StatusProcessor> BuildPipeline()
         {
@@ -31,8 +34,15 @@ namespace choicebot.ChoiceBotNS
         
         private async Task PipeYesNo(Status status, Func<Task> next)
         {
-            // TODO
-            await next();
+            if (!status.Content.Contains("예아니오"))
+            {
+                await next();
+                return;
+            }
+
+            double randNum = _rand.NextDouble();
+            string replyText = $"{((randNum >= 0.5) ? "예" : "아니오")} ({Math.Round(randNum * 100)}%)";
+            await ReplyTo(status, replyText);
         }
         
         private async Task PipeDice(Status status, Func<Task> next)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -14,8 +14,8 @@ namespace choicebot.ChoiceBotNS
     {
         private readonly Random _rand = new Random();
 
-        private const string HelpText = "선택할 게 없는 것 같습니다. 이렇게 해보세요:\r\n\r\n"
-            + "- 선택: 공백이나 vs로 구분해서 보내주세요\r\n"
+        private const string HelpText = 
+              "- 선택: 공백이나 vs로 구분해서 보내주세요\r\n"
             + "- 주사위: (주사위 개수)d(주사위 숫자) 를 보내주세요 (예: d5 2d10 등)\r\n"
             + "- 예아니오: 끝에 예아니오를 적어서 포함해서 보내주세요\r\n";
 
@@ -23,15 +23,27 @@ namespace choicebot.ChoiceBotNS
         {
             var list = new List<StatusProcessor>()
             {
+                PipeHelp,
                 PipeYesNo,
                 PipeDice,
                 PipeChoice,
-                PipeHelp
+                PipeNotHandledHelp
             };
             
             return base.BuildPipeline().Concat(list);
         }
-        
+
+        private async Task PipeHelp(Status status, Func<Task> next)
+        {
+            if (!status.Content.Contains("도움말"))
+            {
+                await next();
+                return;
+            }
+
+            await ReplyTo(status, HelpText);
+        }
+
         private async Task PipeYesNo(Status status, Func<Task> next)
         {
             if (!status.Content.Contains("예아니오"))
@@ -121,9 +133,9 @@ namespace choicebot.ChoiceBotNS
             await ReplyTo(status, selection);
         }
         
-        private async Task PipeHelp(Status status, Func<Task> next)
+        private async Task PipeNotHandledHelp(Status status, Func<Task> next)
         {
-            await ReplyTo(status, HelpText);
+            await ReplyTo(status, "선택할 게 없는 것 같습니다. 이렇게 해보세요:\r\n\r\n" + HelpText);
         }
         
         private static string[] _ParseToSelectableItems(string statusText)

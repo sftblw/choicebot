@@ -47,7 +47,7 @@ namespace choicebot.ChoiceBotNS
 
         private async Task PipeYesNo(Status status, Func<Task> next)
         {
-            if (!status.Content.Contains("예아니오"))
+            if (!status.Content.Contains("예아니오") && !status.Content.Contains("예아니요"))
             {
                 await next();
                 return;

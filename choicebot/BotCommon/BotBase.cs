@@ -46,7 +46,7 @@ namespace choicebot.BotCommon
 
 #region Common bot Services
 
-        public async Task ReplyWithText(Status status, string replyText)
+        private string _ToReplyText(Status status, string replyText)
         {
             IEnumerable<string> mentions = from mention in status.Mentions
                                where !(mention.AccountName == BotUserInfo.AccountName || mention.AccountName == status.Account.AccountName)
@@ -57,7 +57,24 @@ namespace choicebot.BotCommon
             replyText = WebUtility.HtmlDecode(replyText);
             string replyContent = $"{mentionsText} {replyText}";
 
-            await MastoClient.PostStatus(replyContent, _botPrivacyOption.ToBotVisibility(status.Visibility), status.Id);
+            return replyContent;
+        }
+
+        public async Task ReplyTo(Status status, string replyText, bool trimLength = true)
+        {
+            const int MaxLetters = 500;
+            const string LengthTrimmedDisplayer = "...(잘림)";
+            
+            string replyStatus = _ToReplyText(status, replyText);
+            
+            if (replyStatus.Length > MaxLetters)
+            {
+                replyStatus = replyStatus.Substring(0, MaxLetters - LengthTrimmedDisplayer.Length)
+                              +
+                              LengthTrimmedDisplayer;
+            }
+            
+            await MastoClient.PostStatus(replyStatus, _botPrivacyOption.ToBotVisibility(status.Visibility), status.Id);
         }
 
         protected async Task PipeFilterOnlyMentionToBot(Status status, Func<Task> next)

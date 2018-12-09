@@ -38,32 +38,57 @@ namespace choicebot.ChoiceBotNS
         private async Task PipeDice(Status status, Func<Task> next)
         {
             string diceExpression = status.Content.Trim();
+            string[] diceExprList = diceExpression.Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            var matchQuery = diceExprList.Select(expr => Regex.Match(expr, "([0-9]*?)[dD]([0-9]+)"));
+            var matchList = matchQuery as Match[] ?? matchQuery.ToArray();
             
-            var match = Regex.Match(diceExpression, "[dD]([0-9]+)");
-            if (!match.Success)
+            if (matchList.Any(match => !match.Success))
             {
                 await next();
                 return;
             }
             
             const string diceErrorMsg = "주사위 숫자를 확인할 수 없습니다. 숫자가 1보다 큰지 확인해보세요.";
- 
-            string diceNumStr = match.Groups[1].Value;
-            int diceNum;
 
-            try { 
-                diceNum = int.Parse(diceNumStr);
-                if (diceNum <= 1) { throw new ArgumentException("diceNum is less than 1"); }
+            try
+            {
+                string[] diceResults = matchList.Select(match =>
+                {
+                    string diceCountStr = match.Groups[1].Value;
+                    diceCountStr = string.IsNullOrWhiteSpace(diceCountStr) ? "1" : diceCountStr;
+                    string diceNumStr = match.Groups[2].Value;
+
+                    int diceCount;
+                    int diceNum;
+
+                    diceCount = int.Parse(diceCountStr);
+                    diceNum = int.Parse(diceNumStr);
+                    if (diceNum <= 1)
+                    {
+                        throw new ArgumentException("diceNum is less than or equal to 1");
+                    }
+
+                    string diceRollStr = string.Join(", ", Enumerable
+                        .Repeat(0, diceCount)
+                        .Select(_ => _rand.Next(1, diceNum + 1)).ToArray());
+
+                    return $"{diceRollStr} ({diceNum}면체)";
+                }).ToArray();
+
+                string diceReplyStr = string.Join("\r\n", diceResults);
+                if (diceResults.Length > 1)
+                {
+                    diceReplyStr = "\r\n" + diceReplyStr;
+                }
+                
+                await ReplyTo(status, diceReplyStr);
             }
             catch (Exception ex)
             {
-                await _ReplyWithText(status, diceErrorMsg + "\r\n\r\n" + $"에러 메시지: {ex.Message}");
+                await ReplyTo(status, diceErrorMsg + "\r\n\r\n" + $"에러 메시지: {ex.Message}");
                 return;
             }
-
-            string diceReplyStr = $"{_rand.Next(1, diceNum)} ({diceNum}면체 주사위)";
-
-            await _ReplyWithText(status, diceReplyStr);
         }
         
         private async Task PipeChoice(Status status, Func<Task> next)
@@ -77,12 +102,12 @@ namespace choicebot.ChoiceBotNS
             }
             
             string selection = selectable[_rand.Next(selectable.Count())].Trim();
-            await _ReplyWithText(status, selection);
+            await ReplyTo(status, selection);
         }
         
         private async Task PipeHelp(Status status, Func<Task> next)
         {
-            await _ReplyWithText(status, HelpText);
+            await ReplyTo(status, HelpText);
         }
         
         private static string[] _ParseToSelectableItems(string statusText)
@@ -102,20 +127,6 @@ namespace choicebot.ChoiceBotNS
             }
 
             return selectable;
-        }
-
-        private async Task _ReplyWithText(Status status, string replyText)
-        {
-            IEnumerable<string> mentions = from mention in status.Mentions
-                               where !(mention.AccountName == BotUserInfo.AccountName || mention.AccountName == status.Account.AccountName)
-                               select $"@{mention.AccountName}";
-
-            string mentionsText = $"@{status.Account.AccountName} {string.Join(' ', mentions)}".Trim();
-
-            replyText = WebUtility.HtmlDecode(replyText);
-            string replyContent = $"{mentionsText} {replyText}";
-
-            await MastoClient.PostStatus(replyContent, _botPrivacyOption.ToBotVisibility(status.Visibility), status.Id);
         }
     }
 }

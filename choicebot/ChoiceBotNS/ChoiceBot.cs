@@ -112,6 +112,12 @@ namespace choicebot.ChoiceBotNS
             }
             
             string selection = selectable[_rand.Next(selectable.Count())].Trim();
+            
+            if (selectable.Length == 1)
+            {
+                selection += "\r\n(선택할 항목이 하나밖에 없는 것 같습니다.)";
+            }
+            
             await ReplyTo(status, selection);
         }
         

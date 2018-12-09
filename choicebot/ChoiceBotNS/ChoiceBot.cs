@@ -17,7 +17,8 @@ namespace choicebot.ChoiceBotNS
         private const string HelpText = 
               "- 선택: 공백이나 vs로 구분해서 보내주세요\r\n"
             + "- 주사위: (주사위 개수)d(주사위 숫자) 를 보내주세요 (예: d5 2d10 등)\r\n"
-            + "- 예아니오: 끝에 예아니오를 적어서 포함해서 보내주세요\r\n";
+            + "- 예아니오: 끝에 예아니오를 적어서 포함해서 보내주세요\r\n"
+            + "- 도움말: 이 내용을 보내드려요";
 
         public override IEnumerable<StatusProcessor> BuildPipeline()
         {

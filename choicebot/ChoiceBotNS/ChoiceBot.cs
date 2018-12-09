@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -53,7 +53,7 @@ namespace choicebot.ChoiceBotNS
             var matchQuery = diceExprList.Select(expr => Regex.Match(expr, "([0-9]*?)[dD]([0-9]+)"));
             var matchList = matchQuery as Match[] ?? matchQuery.ToArray();
             
-            if (matchList.Any(match => !match.Success))
+            if (matchList.Any(match => !match.Success) || matchList.Length == 0)
             {
                 await next();
                 return;

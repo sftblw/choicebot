@@ -5,7 +5,7 @@ After=network-online.target
 StartLimitInterval=0
 
 [Service]
-ExecStart=/usr/bin/dotnet /your/place/of/choicebot/choicebot/serve/choicebot.dll
+ExecStart=/usr/bin/dotnet /your/place/of/choicebot/choicebot/serve/choicebot.netcore.dll
 WorkingDirectory=/your/place/of/choicebot/choicebot/serve
 User=choicebot
 Restart=always

@@ -44,6 +44,11 @@ namespace choicebot
         private async static Task<MastodonClient> PrepareClient()
         {
             var configDir = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), ".config");
+            if (!Directory.Exists(configDir))
+            {
+                Directory.CreateDirectory(configDir);
+            }
+
             var configFiles = new DirectoryInfo(configDir).GetFiles("*.json");
 
             string configFilePath = null;

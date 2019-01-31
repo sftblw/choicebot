@@ -1,47 +1,43 @@
 ﻿using Mastonet;
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using Mastonet.Entities;
+using choicebot.BotAccess;
+using choicebot.BotCommon;
+using choicebot.ChoiceBotNS;
 
 namespace choicebot
 {
     public static class Program
     {
-        static MastodonClient client = null;
-        static string exceptionMessage = "[!] 예외가 발생하였습니다.\r\n@sftblw@twingyeo.kr";
+        private static MastodonClient _client;
+        private const string ExceptionMessage = "[!] 예외가 발생하였습니다.\r\n@sftblw@twingyeo.kr";
 
         private async static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Console.WriteLine(e);
-            await client.PostStatus(exceptionMessage, Visibility.Unlisted);
+            await _client.PostStatus(ExceptionMessage, Visibility.Unlisted);
         }
 
         public async static Task Execute()
         {
             System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            var mastoClient = await PrepareClient();
-            client = mastoClient;
+            MastodonClient mastoClient = await PrepareClient();
+            _client = mastoClient;
 
             await StartStreaming(mastoClient);
         }
 
         private static async Task StartStreaming(MastodonClient mastoClient)
         {
-            Account botUserInfo = await mastoClient.GetCurrentUser();
-
             Console.WriteLine("choicebot running...");
 
-            await new ChoiceBot(mastoClient).Start();
+            var botManager = new BotManager(mastoClient);
+            botManager.AddBot<ChoiceBot>();
+            await botManager.Start();
         }
 
-        private async static Task<MastodonClient> PrepareClient()
+        private static async Task<MastodonClient> PrepareClient()
         {
             var configDir = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), ".config");
             if (!Directory.Exists(configDir))
@@ -55,28 +51,27 @@ namespace choicebot
 
             if (configFiles.Length == 0)
             {
-                configFilePath = Path.Combine(configDir, "botAccess.json");
+                configFilePath = Path.Combine(configDir, "botAccessConfig.json");
             }
             else
             {
                 configFilePath = configFiles.First().FullName;
             }
-            
 
             var persistent = new BotAccessPersistent(configFilePath);
 
-            MastodonClient client = (await persistent.Load())?.AsMastodonClient();
+            MastodonClient preparedClient = (await persistent.Load())?.AsMastodonClient();
 
-            if (client == null) {
-                BotAccess access = await BotAccessCreator.InteractiveConsoleRegister();
+            if (preparedClient == null) {
+                BotAccess.BotAccess access = await BotAccessCreator.InteractiveConsoleRegister();
                 if (access != null) { await persistent.Save(access); }
 
-                client = access?.AsMastodonClient();
+                preparedClient = access?.AsMastodonClient();
             }
 
-            if (client == null) { throw new Exception("client is null. somehow failed to create mastodon client."); }
+            if (preparedClient == null) { throw new Exception("client is null. somehow failed to create mastodon client."); }
 
-            return client;
+            return preparedClient;
         }
 
         // not working and not needed but backup purposed

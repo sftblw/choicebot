@@ -93,7 +93,7 @@ namespace choicebot
                                where !(mention.AccountName == botUserInfo.AccountName || mention.AccountName == status.Account.AccountName)
                                select $"@{mention.AccountName}";
 
-            var mentionsText = $"@{status.Account.AccountName} {string.Join(' ', mentions)}".Trim();
+            var mentionsText = $"@{status.Account.AccountName} {string.Join(" ", mentions)}".Trim();
 
             var replyContent = $"{mentionsText} {replyText}";
 

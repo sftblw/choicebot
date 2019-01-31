@@ -32,7 +32,15 @@ namespace choicebot
                     ContractResolver = new IgnoreJsonAttributesResolver()
                 };
 
-                var botAccess = JsonConvert.DeserializeObject<BotAccess>(await File.ReadAllTextAsync(path), jsonSettings);
+
+
+                string botConfigText;
+                using (var reader = File.OpenText(path))
+                {
+                    botConfigText = await reader.ReadToEndAsync();
+                }
+
+                var botAccess = JsonConvert.DeserializeObject<BotAccess>(File.ReadAllText(path), jsonSettings);
 
                 return botAccess;
             }
@@ -47,7 +55,10 @@ namespace choicebot
                 ContractResolver = new IgnoreJsonAttributesResolver()
             };
 
-            await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(accessData, jsonSettings));
+            using (var writer = File.CreateText(path))
+            {
+                await writer.WriteAsync(JsonConvert.SerializeObject(accessData, jsonSettings));
+            }
         }
     }
 

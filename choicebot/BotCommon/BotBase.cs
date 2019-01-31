@@ -52,7 +52,7 @@ namespace choicebot.BotCommon
                                where !(mention.AccountName == BotUserInfo.AccountName || mention.AccountName == status.Account.AccountName)
                                select $"@{mention.AccountName}";
 
-            string mentionsText = $"@{status.Account.AccountName} {string.Join(" ", mentions)}".Trim();
+            string mentionsText = $"@{status.Account.AccountName} {string.Join(' ', mentions)}".Trim();
 
             replyText = WebUtility.HtmlDecode(replyText);
             string replyContent = $"{mentionsText} {replyText}";

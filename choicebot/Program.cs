@@ -1,8 +1,5 @@
 ﻿using Mastonet;
 using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using choicebot.BotAccess;
 using choicebot.BotCommon;
@@ -15,16 +12,20 @@ namespace choicebot
         private static MastodonClient _client;
         private const string ExceptionMessage = "[!] 예외가 발생하였습니다.\r\n@sftblw@twingyeo.kr";
 
-        private async static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        public static void Main(string[] args)
+        {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Execute().Wait();
+        }
+
+        private static async void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Console.WriteLine(e);
             await _client.PostStatus(ExceptionMessage, Visibility.Unlisted);
         }
 
-        public async static Task Execute()
+        private static async Task Execute()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
             MastodonClient mastoClient = await PrepareClient();
             _client = mastoClient;
 
@@ -42,26 +43,9 @@ namespace choicebot
 
         private static async Task<MastodonClient> PrepareClient()
         {
-            var configDir = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), ".config");
-            if (!Directory.Exists(configDir))
-            {
-                Directory.CreateDirectory(configDir);
-            }
+            const string clientPath = "./.config/botAccessConfig.json";
 
-            var configFiles = new DirectoryInfo(configDir).GetFiles("*.json");
-
-            string configFilePath = null;
-
-            if (configFiles.Length == 0)
-            {
-                configFilePath = Path.Combine(configDir, "botAccessConfig.json");
-            }
-            else
-            {
-                configFilePath = configFiles.First().FullName;
-            }
-
-            var persistent = new BotAccessPersistent(configFilePath);
+            var persistent = new BotAccessPersistent(clientPath);
 
             MastodonClient preparedClient = (await persistent.Load())?.AsMastodonClient();
 

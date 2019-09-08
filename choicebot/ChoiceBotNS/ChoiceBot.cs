@@ -47,14 +47,14 @@ namespace choicebot.ChoiceBotNS
 
         private async Task PipeYesNo(Status status, Func<Task> next)
         {
-            if (!status.Content.Contains("예아니오") && !status.Content.Contains("예아니요"))
+            if (!Regex.IsMatch(status.Content, "[예네]아니[요오]"))
             {
                 await next();
                 return;
             }
 
             double randNum = _rand.NextDouble();
-            string replyText = $"{((randNum >= 0.5) ? "예" : "아니오")} ({Math.Round(randNum * 100)}%)";
+            string replyText = $"{((randNum >= 0.5) ? "예" : "아니오")} ({Math.Round(randNum * 200 - 100)}%)";
             await ReplyTo(status, replyText);
         }
         

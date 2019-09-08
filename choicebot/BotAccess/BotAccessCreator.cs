@@ -58,7 +58,7 @@ namespace choicebot.BotAccess
                 {
                     Console.WriteLine("Choose login method.");
                     Console.WriteLine("1: Login via URL (If you use 2-factor It's mandatory)");
-                    Console.WriteLine("2: Login by ID, PW");
+                    Console.WriteLine("2: Login by ID, PW (not implemented yet)");
                     Console.WriteLine();
                     Console.Write("method : ");
 
@@ -77,18 +77,23 @@ namespace choicebot.BotAccess
 
             if (isLoginByUrl)
             {
-                string url = authClient.OAuthUrl();
-
-                Console.WriteLine($"Login with this url : {url}");
-                Console.Write("paste authorization token here :");
-
-                string oauthCode = Console.ReadLine()?.Trim();
-                Auth auth = await authClient.ConnectWithCode(oauthCode);
-
-                return auth;
+                return await _InteractiveLoginUrl(authClient);
             }
 
             throw new NotImplementedException();
+        }
+
+        private static async Task<Auth> _InteractiveLoginUrl(IAuthenticationClient authClient)
+        {
+            string url = authClient.OAuthUrl();
+
+            Console.WriteLine($"Login with this url : {url}");
+            Console.Write("paste authorization token here :");
+
+            string oauthCode = Console.ReadLine()?.Trim();
+            Auth auth = await authClient.ConnectWithCode(oauthCode);
+
+            return auth;
         }
 
         private static void _ProcessUserInputError(Exception ex)

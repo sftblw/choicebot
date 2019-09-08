@@ -39,6 +39,7 @@ namespace choicebot.BotCommon
             return new List<StatusProcessor>
             {
                 PipeFilterOnlyMentionToBot,
+                PipeFilterMentionByBot,
                 PipeRemoveHtml,
                 PipeRemoveMention
             };
@@ -63,7 +64,7 @@ namespace choicebot.BotCommon
         public async Task ReplyTo(Status status, string replyText, bool trimLength = true)
         {
             const int MaxLetters = 500;
-            const string LengthTrimmedDisplayer = "...(잘림)";
+            const string LengthTrimmedDisplayer = "...";
             
             string replyStatus = _ToReplyText(status, replyText);
             
@@ -89,7 +90,15 @@ namespace choicebot.BotCommon
                 await next();
             };
         }
-        
+
+        protected async Task PipeFilterMentionByBot(Status status, Func<Task> next)
+        {
+            if (status.Account.Bot != true)
+            {
+                await next();
+            };
+        }
+
         protected static async Task PipeRemoveHtml(Status status, Func<Task> next)
         {
             // strip out html https://stackoverflow.com/a/286825/4394750

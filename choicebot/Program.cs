@@ -20,7 +20,7 @@ namespace choicebot
 
         private static async void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Console.WriteLine(e);
+            Console.Error.WriteLine(e);
             await _client.PostStatus(ExceptionMessage, Visibility.Unlisted);
         }
 

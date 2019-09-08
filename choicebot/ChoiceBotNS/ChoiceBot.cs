@@ -45,16 +45,52 @@ namespace choicebot.ChoiceBotNS
             await ReplyTo(status, HelpText);
         }
 
+        private Dictionary<string, YesNoInfo> pipeYesNoRegexByLang = null;
+
+        private class YesNoInfo
+        {
+            public string Lang { get; set; }
+            public Regex Regex { get; set; }
+            public string Yes { get; set; }
+            public string No { get; set; }
+        }
         private async Task PipeYesNo(Status status, Func<Task> next)
         {
-            if (!Regex.IsMatch(status.Content, "[예네]아니[요오]"))
+            if (pipeYesNoRegexByLang == null)
+            {
+                pipeYesNoRegexByLang = new List<YesNoInfo>()
+                {
+                    new YesNoInfo {
+                        Regex = new Regex("([예네](아니[요오]|아뇨|니[요오]))", RegexOptions.Compiled | RegexOptions.Multiline),
+                        Lang = "kr",
+                        Yes = "예",
+                        No = "아니오"
+                    },
+                    new YesNoInfo {
+                            Regex = new Regex("(yes|yeah)(no|nah)", RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase),
+                        Lang = "en",
+                        Yes = "Yes",
+                        No = "No"
+                    },
+                    new YesNoInfo
+                    {
+                        Regex = new Regex("[はハﾊ][いイｲ]+[えエｴ]", RegexOptions.Compiled | RegexOptions.Multiline),
+                        Lang = "jp",
+                        Yes = "はい",
+                        No = "いいえ"
+                    }
+                }.ToDictionary(item => item.Lang, item => item);
+            }
+
+            YesNoInfo yni = pipeYesNoRegexByLang.FirstOrDefault(item => item.Value.Regex.IsMatch(status.Content)).Value;
+            if (yni == null)
             {
                 await next();
                 return;
             }
 
             double randNum = _rand.NextDouble();
-            string replyText = $"{((randNum >= 0.5) ? "예" : "아니오")} ({Math.Round(randNum * 200 - 100)}%)";
+            string replyText = $"{((randNum >= 0.5) ? yni.Yes : yni.No)} ({Math.Round(randNum * 200 - 100)}%)";
             await ReplyTo(status, replyText);
         }
         

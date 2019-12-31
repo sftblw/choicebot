@@ -5,11 +5,11 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using choicebot.ChoiceBotNS;
+using choicebot_.ChoiceBotNS;
 using Mastonet;
 using Mastonet.Entities;
 
-namespace choicebot.BotCommon
+namespace choicebot_.BotCommon
 {
     public abstract class BotBase : IBotService
     {

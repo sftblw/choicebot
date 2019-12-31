@@ -1,11 +1,11 @@
 ﻿using Mastonet;
 using System;
 using System.Threading.Tasks;
-using choicebot.BotAccess;
-using choicebot.BotCommon;
-using choicebot.ChoiceBotNS;
+using choicebot_.BotAccess;
+using choicebot_.BotCommon;
+using choicebot_.ChoiceBotNS;
 
-namespace choicebot
+namespace choicebot_
 {
     public static class Program
     {
@@ -28,37 +28,17 @@ namespace choicebot
         {
             MastodonClient mastoClient = await PrepareClient();
             _client = mastoClient;
-
+            
             await StartStreaming(mastoClient);
         }
 
         private static async Task StartStreaming(MastodonClient mastoClient)
         {
-            Console.WriteLine("choicebot running...");
+            Console.WriteLine("choicebot_ running...");
 
             var botManager = new BotManager(mastoClient);
             botManager.AddBot<ChoiceBot>();
             await botManager.Start();
-        }
-
-        private static async Task<MastodonClient> PrepareClient()
-        {
-            const string clientPath = "./.config/botAccessConfig.json";
-
-            var persistent = new BotAccessPersistent(clientPath);
-
-            MastodonClient preparedClient = (await persistent.Load())?.AsMastodonClient();
-
-            if (preparedClient == null) {
-                BotAccess.BotAccess access = await BotAccessCreator.InteractiveConsoleRegister();
-                if (access != null) { await persistent.Save(access); }
-
-                preparedClient = access?.AsMastodonClient();
-            }
-
-            if (preparedClient == null) { throw new Exception("client is null. somehow failed to create mastodon client."); }
-
-            return preparedClient;
         }
 
         // not working and not needed but backup purposed

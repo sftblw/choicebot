@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Mastonet;
 using Mastonet.Entities;
 
-namespace choicebot.BotCommon
+namespace choicebot_.BotCommon
 {
     public class BotManager
     {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Mastonet;
 
-namespace choicebot.BotCommon
+namespace choicebot_.BotCommon
 {
     public interface IBotService
     {

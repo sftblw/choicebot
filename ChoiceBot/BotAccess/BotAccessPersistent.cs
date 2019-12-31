@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace choicebot.BotAccess
+namespace ChoiceBot.BotAccess
 {
     public class BotAccessPersistent
     {

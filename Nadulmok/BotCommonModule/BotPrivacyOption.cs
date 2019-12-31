@@ -1,16 +1,17 @@
 ﻿using System;
-using Mastonet;
+using Nadulmok.BotCommon;
+using Nadulmok.SocialApi;
 
-namespace choicebot.ChoiceBotNS
+namespace Nadulmok.BotCommonModule
 {
     public class BotPrivacyOption
     {
-        internal Visibility TargetVisibility { get; set; } = Visibility.Unlisted;
-        internal BotVisibilityLimit VisibilityLimit { get; set; } = BotVisibilityLimit.LimitPublicLevel;
+        public Visibility TargetVisibility { get; set; } = Visibility.Unlisted;
+        public BotVisibilityLimit VisibilityLimit { get; set; } = BotVisibilityLimit.LimitPublicLevel;
 
-        internal bool PreserveContentWarning { get; set; } = false; // TODO. currently It's dummy
+        public bool PreserveContentWarning { get; set; } = false; // TODO. currently It's dummy
 
-        internal Visibility ToBotVisibility(Visibility source)
+        private Visibility ToBotVisibility(Visibility source)
         {
             switch(VisibilityLimit)
             {

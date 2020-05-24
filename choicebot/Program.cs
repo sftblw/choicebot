@@ -1,11 +1,15 @@
 ﻿using Mastonet;
 using System;
 using System.Threading.Tasks;
-using choicebot.BotAccess;
-using choicebot.BotCommon;
-using choicebot.ChoiceBotNS;
+using ChoiceBot.BotAccess;
+using ChoiceBot.BotCommon;
+using ChoiceBot.ChoiceBotMain;
+using ChoiceBot.ChoiceBotNS;
+using ChoiceBot.SocialApi;
+using ChoiceBot.SocialApi.MastoNetAdapter;
+using Visibility = Mastonet.Visibility;
 
-namespace choicebot
+namespace ChoiceBot
 {
     public static class Program
     {
@@ -29,15 +33,17 @@ namespace choicebot
             MastodonClient mastoClient = await PrepareClient();
             _client = mastoClient;
 
-            await StartStreaming(mastoClient);
+            await Start(mastoClient);
         }
 
-        private static async Task StartStreaming(MastodonClient mastoClient)
+        private static async Task Start(MastodonClient mastoClient)
         {
+            var client = mastoClient.ToCommon();
+            
+            var botManager = new BotManager(client);
+            botManager.AddBot(new ChoiceBotMain.ChoiceBot(client));
+            
             Console.WriteLine("choicebot running...");
-
-            var botManager = new BotManager(mastoClient);
-            botManager.AddBot<ChoiceBot>();
             await botManager.Start();
         }
 
@@ -60,23 +66,5 @@ namespace choicebot
 
             return preparedClient;
         }
-
-        // not working and not needed but backup purposed
-        //private static void WaitUntilExitPressed()
-        //{
-        //    ConsoleKeyInfo keyInfo;
-        //    while (true)
-        //    {
-        //        keyInfo = Console.ReadKey();
-        //        if (keyInfo.Key == ConsoleKey.C && keyInfo.Modifiers == ConsoleModifiers.Control)
-        //        {
-        //            break;
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine("Hint: Press [Ctrl] + [C] to exit this app.");
-        //        }
-        //    }
-        //}
     }
 }

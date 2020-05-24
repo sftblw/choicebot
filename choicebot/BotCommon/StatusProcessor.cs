@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Mastonet.Entities;
+using ChoiceBot.SocialApi;
 
-namespace choicebot.BotCommon
+namespace ChoiceBot.BotCommon
 {
-    public delegate Task StatusProcessor(Status status, Func<Task> next);
+    public delegate Task StatusProcessor(INote note, Func<Task> next);
 }

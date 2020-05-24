@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Mastonet;
 using Mastonet.Entities;
 
-namespace choicebot.BotAccess
+namespace ChoiceBot.BotAccess
 {
     public static class BotAccessCreator
     {

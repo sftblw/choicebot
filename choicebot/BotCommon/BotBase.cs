@@ -5,29 +5,35 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using choicebot.ChoiceBotNS;
+using ChoiceBot.ChoiceBotNS;
+using ChoiceBot.SocialApi;
 using Mastonet;
-using Mastonet.Entities;
+using Visibility = Mastonet.Visibility;
 
-namespace choicebot.BotCommon
+namespace ChoiceBot.BotCommon
 {
     public abstract class BotBase : IBotService
     {
-        public MastodonClient MastoClient { get; set; }
-        protected Account BotUserInfo { get; private set; }
+        protected IApiClient _client;
+        protected IAccount? BotUserInfo { get; private set; }
         
         protected readonly BotPrivacyOption _botPrivacyOption = new BotPrivacyOption
         {
             PreserveContentWarning = false, // TODO
             VisibilityLimit = BotVisibilityLimit.LimitPublicLevel,
-            TargetVisibility = Visibility.Unlisted
+            TargetVisibility = StepVisibility.Unlisted
         };
-        
+
+        protected BotBase(IApiClient client)
+        {
+            _client = client;
+        }
+
         // IBotService
         
         public virtual async Task Initialize()
         {
-            BotUserInfo = await MastoClient.GetCurrentUser();
+            BotUserInfo = await _client.GetCurrentUser();
         }
 
         /// <summary>
@@ -44,16 +50,18 @@ namespace choicebot.BotCommon
                 PipeRemoveMention
             };
         }
+        
+        // TODO: extract concept
+        #region Common bot Services
 
-#region Common bot Services
-
-        private string _ToReplyText(Status status, string replyText)
+        private string _ToReplyText(INote status, string replyText)
         {
             IEnumerable<string> mentions = from mention in status.Mentions
-                               where !(mention.AccountName == BotUserInfo.AccountName || mention.AccountName == status.Account.AccountName)
-                               select $"@{mention.AccountName}";
+                               where !(mention.WebFinger == BotUserInfo.WebFinger
+                                       || mention.WebFinger == status.Account.WebFinger)
+                               select $"@{mention.WebFinger}";
 
-            string mentionsText = $"@{status.Account.AccountName} {string.Join(' ', mentions)}".Trim();
+            string mentionsText = $"@{status.Account.WebFinger} {string.Join(' ', mentions)}".Trim();
 
             replyText = WebUtility.HtmlDecode(replyText);
             string replyContent = $"{mentionsText} {replyText}";
@@ -61,12 +69,12 @@ namespace choicebot.BotCommon
             return replyContent;
         }
 
-        public async Task ReplyTo(Status status, string replyText, bool trimLength = true)
+        public async Task ReplyTo(INote note, string replyText, bool trimLength = true)
         {
             const int MaxLetters = 500;
             const string LengthTrimmedDisplayer = "...";
             
-            string replyStatus = _ToReplyText(status, replyText);
+            string replyStatus = _ToReplyText(note, replyText);
             
             if (replyStatus.Length > MaxLetters)
             {
@@ -75,15 +83,15 @@ namespace choicebot.BotCommon
                               LengthTrimmedDisplayer;
             }
             
-            await MastoClient.PostStatus(replyStatus, _botPrivacyOption.ToBotVisibility(status.Visibility), status.Id);
+            await _client.CreateNote(replyStatus, _botPrivacyOption.ToBotVisibility(note.Visibility), note.Id);
         }
 
-        protected async Task PipeFilterOnlyMentionToBot(Status status, Func<Task> next)
+        protected async Task PipeFilterOnlyMentionToBot(INote note, Func<Task> next)
         {
-            if (status?.Mentions?.Any(
+            if (note?.Mentions?.Any(
                     mention =>
-                        mention.AccountName == BotUserInfo.AccountName
-                        && status.Account.AccountName != BotUserInfo.AccountName)
+                        mention.WebFinger == BotUserInfo.WebFinger
+                        && note.Account.WebFinger != BotUserInfo.WebFinger)
                 == true
             )
             {
@@ -91,29 +99,30 @@ namespace choicebot.BotCommon
             };
         }
 
-        protected async Task PipeFilterMentionByBot(Status status, Func<Task> next)
+        protected async Task PipeFilterMentionByBot(INote note, Func<Task> next)
         {
-            if (status.Account.Bot != true)
+            if (note.Account.IsBot != true)
             {
                 await next();
             };
         }
 
-        protected static async Task PipeRemoveHtml(Status status, Func<Task> next)
+        protected static async Task PipeRemoveHtml(INote note, Func<Task> next)
         {
             // strip out html https://stackoverflow.com/a/286825/4394750
-            string statusText = status.Content;
+            string statusText = note.Content;
             
             statusText = statusText.Replace("<br />", "\r\n").Replace("<br/>", "\r\n");
             statusText = new Regex("<[^>]*>").Replace(statusText, "");
-            status.Content = statusText;
+            note.Content = statusText;
 
             await next();
         }
 
-        protected static async Task PipeRemoveMention(Status status, Func<Task> next)
+        protected static async Task PipeRemoveMention(INote note, Func<Task> next)
         {
-            status.Content = new Regex("\\@[^\r\n ]+").Replace(status.Content, "").Trim();
+            note.Content = new Regex("\\@[^\r\n ]+")
+                .Replace(note.Content, "").Trim();
             
             await next();
         }

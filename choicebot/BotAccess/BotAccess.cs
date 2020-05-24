@@ -2,7 +2,7 @@
 using Mastonet.Entities;
 using Newtonsoft.Json;
 
-namespace choicebot.BotAccess
+namespace ChoiceBot.BotAccess
 {
     public class BotAccess
     {

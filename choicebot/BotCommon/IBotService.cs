@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ChoiceBot.SocialApi;
 using Mastonet;
 
-namespace choicebot.BotCommon
+namespace ChoiceBot.BotCommon
 {
     public interface IBotService
     {
-        MastodonClient MastoClient { get; set; }
         Task Initialize();
         IEnumerable<StatusProcessor> BuildPipeline();
     }

@@ -9,7 +9,7 @@ ExecStart=/usr/bin/dotnet /your/place/of/choicebot/choicebot/serve/choicebot.dll
 WorkingDirectory=/your/place/of/choicebot/choicebot/serve
 User=choicebot
 Restart=always
-RestartSec=3s
+RestartSec=10s
 
 [Install]
 WantedBy=multi-user.target

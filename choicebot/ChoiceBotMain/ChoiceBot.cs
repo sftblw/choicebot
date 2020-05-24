@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using choicebot.BotCommon;
-using Mastonet;
-using Mastonet.Entities;
+using ChoiceBot.BotCommon;
+using ChoiceBot.SocialApi;
 
-namespace choicebot.ChoiceBotNS
+namespace ChoiceBot.ChoiceBotMain
 {
     public class ChoiceBot: BotBase
     {
@@ -20,6 +18,10 @@ namespace choicebot.ChoiceBotNS
             + "- 예아니오: 끝에 예아니오를 넣어서 보내주세요\r\n"
             + "- 도움말: 이 내용을 보내드려요";
 
+        public ChoiceBot(IApiClient client) : base(client)
+        {
+        }
+        
         public override IEnumerable<StatusProcessor> BuildPipeline()
         {
             var list = new List<StatusProcessor>()
@@ -34,7 +36,7 @@ namespace choicebot.ChoiceBotNS
             return base.BuildPipeline().Concat(list);
         }
 
-        private async Task PipeHelp(Status status, Func<Task> next)
+        private async Task PipeHelp(INote status, Func<Task> next)
         {
             if (!status.Content.Contains("도움말"))
             {
@@ -54,7 +56,7 @@ namespace choicebot.ChoiceBotNS
             public string Yes { get; set; }
             public string No { get; set; }
         }
-        private async Task PipeYesNo(Status status, Func<Task> next)
+        private async Task PipeYesNo(INote status, Func<Task> next)
         {
             if (pipeYesNoRegexByLang == null)
             {
@@ -94,7 +96,7 @@ namespace choicebot.ChoiceBotNS
             await ReplyTo(status, replyText);
         }
         
-        private async Task PipeDice(Status status, Func<Task> next)
+        private async Task PipeDice(INote status, Func<Task> next)
         {
             string diceExpression = status.Content.Trim();
             string[] diceExprList = diceExpression.Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -150,7 +152,7 @@ namespace choicebot.ChoiceBotNS
             }
         }
         
-        private async Task PipeChoice(Status status, Func<Task> next)
+        private async Task PipeChoice(INote status, Func<Task> next)
         {
             string[] selectable = _ParseToSelectableItems(status.Content);
 
@@ -170,25 +172,33 @@ namespace choicebot.ChoiceBotNS
             await ReplyTo(status, selection);
         }
         
-        private async Task PipeNotHandledHelp(Status status, Func<Task> next)
+        private async Task PipeNotHandledHelp(INote status, Func<Task> next)
         {
             await ReplyTo(status, "선택할 게 없는 것 같습니다. 이렇게 해보세요:\r\n\r\n" + HelpText);
         }
         
+        private static readonly Lazy<Regex> VsSepRegex
+            = new Lazy<Regex>(() => new Regex("((^|[ \r\n]+)([Vv][Ss]\\.?)(($|[ \r\n]+)([Vv][Ss]\\.?))*($|[ \r\n]+))", RegexOptions.ExplicitCapture | RegexOptions.Compiled));
+        private static readonly Lazy<Regex> NewLineSepRegex
+            = new Lazy<Regex>(() => new Regex("[\r\n]", RegexOptions.ExplicitCapture | RegexOptions.Compiled));
         private static string[] _ParseToSelectableItems(string statusText)
         {
+            statusText = statusText.Trim();
+            
             string[] selectable;
 
-            const string vsSepRegexStr = "((^|[ \r\n]+)([Vv][Ss]\\.?)(($|[ \r\n]+)([Vv][Ss]\\.?))*($|[ \r\n]+))";
-
-            if (Regex.IsMatch(statusText, vsSepRegexStr, RegexOptions.ExplicitCapture | RegexOptions.Compiled))
+            if (VsSepRegex.Value.IsMatch(statusText))
             {
-                selectable = Regex.Split(statusText, vsSepRegexStr, RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+                selectable = VsSepRegex.Value.Split(statusText);
                 selectable = selectable.Where(item => !string.IsNullOrWhiteSpace(item)).Select(item => item.Trim()).ToArray();
+            }
+            else if (NewLineSepRegex.Value.IsMatch(statusText))
+            {
+                selectable = statusText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             }
             else
             {
-                selectable = statusText.Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                selectable = statusText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             }
 
             return selectable;

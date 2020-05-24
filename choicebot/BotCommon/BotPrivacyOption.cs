@@ -1,16 +1,22 @@
 ﻿using System;
-using Mastonet;
+using ChoiceBot.SocialApi;
 
-namespace choicebot.ChoiceBotNS
+namespace ChoiceBot.ChoiceBotNS
 {
     public class BotPrivacyOption
     {
-        internal Visibility TargetVisibility { get; set; } = Visibility.Unlisted;
+        internal StepVisibility TargetVisibility { get; set; } = StepVisibility.Unlisted;
         internal BotVisibilityLimit VisibilityLimit { get; set; } = BotVisibilityLimit.LimitPublicLevel;
 
         internal bool PreserveContentWarning { get; set; } = false; // TODO. currently It's dummy
 
-        internal Visibility ToBotVisibility(Visibility source)
+        public ICommonVisibility ToBotVisibility(ICommonVisibility visibility)
+        {
+            visibility.Visibility = ToBotStepVisibility(visibility.Visibility);
+            return visibility;
+        }
+        
+        internal StepVisibility ToBotStepVisibility(StepVisibility source)
         {
             switch(VisibilityLimit)
             {
@@ -18,10 +24,10 @@ namespace choicebot.ChoiceBotNS
                     return source;
                     
                 case BotVisibilityLimit.LimitPublicLevel:
-                    return (Visibility)Math.Max((int)TargetVisibility, (int)source);
+                    return (StepVisibility)Math.Max((int)TargetVisibility, (int)source);
 
                 case BotVisibilityLimit.LimitPrivateLevel:
-                    return (Visibility)Math.Min((int)TargetVisibility, (int)source);
+                    return (StepVisibility)Math.Min((int)TargetVisibility, (int)source);
 
                 default: throw new InvalidOperationException($"No matched visibility. source: {source}, target: {TargetVisibility}, limit option: {VisibilityLimit}");
             }

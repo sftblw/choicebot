@@ -6,6 +6,8 @@ Simple choicbot for mastodon with dotnet core, C#.
 
 see in action: <a href="https://twingyeo.kr/@choicebot" rel="me">@choicebot on @twingyeo.kr</a>
 
+warning: This bot still has many hard-coded string values. use with caution.
+
 ## installation
 
 ### 1. build and first time run

@@ -1,43 +1,50 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ChoiceBot.SocialApi;
+using ChoiceBot.SocialApi.MastoNetAdapter;
 using Mastonet;
 using Mastonet.Entities;
 
-namespace choicebot.BotCommon
+namespace ChoiceBot.BotCommon
 {
     public class BotManager
     {
-        private readonly MastodonClient _mastoClient;
+        private readonly IApiClient _apiClient;
         private List<StatusProcessor> _processors = new List<StatusProcessor>();
         
-        public BotManager(MastodonClient client)
+        public BotManager(IApiClient client)
         {
-            _mastoClient = client;
+            _apiClient = client;
         }
         
-        public void AddBot<TBot>() where TBot: IBotService, new()
+        public void AddBot(IBotService bot) 
         {
-            var bot = new TBot();
-            bot.MastoClient = this._mastoClient;
             bot.Initialize();
             _processors.AddRange(bot.BuildPipeline());
         }
         
         public async Task Start()
         {
-            TimelineStreaming stream = _mastoClient.GetUserStreaming();
-
-            stream.OnNotification += async (sender, e) =>
+            // for now. TODO: refactor out UserStream
+            // instead of abstracting UserStream, I decided to use it for now.
+            if (_apiClient is MastoNetClient mastoClient) {
+                TimelineStreaming stream = mastoClient._client.GetUserStreaming();
+                stream.OnNotification += async (sender, e) =>
+                {
+                    Status status = e.Notification.Status;
+                    await _processStatus(status.ToCommon());
+                };
+                
+                await stream.Start();
+            }
+            else
             {
-                Status status = e.Notification.Status;
-                await _processStatus(status);
-            };
-
-            await stream.Start();
+                throw new NotSupportedException("Currently only MastoNet client will be supported");
+            }
         }
 
-        private async Task _processStatus(Status status)
+        private async Task _processStatus(INote note)
         {
             foreach (var process in _processors)
             {
@@ -48,7 +55,7 @@ namespace choicebot.BotCommon
                     await Task.CompletedTask;
                 }
 
-                await process(status, SetNext);
+                await process(note, SetNext);
                 if (!next)
                 {
                     return;

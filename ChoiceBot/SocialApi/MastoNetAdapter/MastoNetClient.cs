@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using ChoiceBot.SocialApi.MastoNetAdapter.Streaming;
+using ChoiceBot.SocialApi.Streaming;
 using Mastonet;
 
 namespace ChoiceBot.SocialApi.MastoNetAdapter
@@ -15,13 +17,14 @@ namespace ChoiceBot.SocialApi.MastoNetAdapter
         public async Task<IAccount> GetCurrentUser() =>
             new MastoNetAccount(await _client.GetCurrentUser());
 
-        public async Task CreateNote(string content, ICommonVisibility visibility, string? replyNoteId)
-        {
-            await _client.PostStatus(
+        public Task CreateNote(string content, ICommonVisibility visibility, string? replyNoteId)
+            => _client.PostStatus(
                 status: content,
                 visibility: visibility.ToMastoNet(),
                 replyStatusId: replyNoteId != null ? (long?)long.Parse(replyNoteId) : null);
-        }
+
+        public IUserStreaming GetUserStreaming()
+            => _client.GetUserStreaming().ToCommon();
     }
 
     public static class MastoNetClientExtension

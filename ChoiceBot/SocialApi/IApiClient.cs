@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using ChoiceBot.SocialApi.Streaming;
 
 namespace ChoiceBot.SocialApi
 {
@@ -7,5 +8,6 @@ namespace ChoiceBot.SocialApi
         Task<IAccount> GetCurrentUser();
 
         Task CreateNote(string content, ICommonVisibility visibility, string? replyNoteId);
+        IUserStreaming GetUserStreaming();
     }
 }

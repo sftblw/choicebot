@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChoiceBot.SocialApi;
 using ChoiceBot.SocialApi.MastoNetAdapter;
+using ChoiceBot.SocialApi.Streaming;
 using Mastonet;
 using Mastonet.Entities;
 
@@ -28,20 +29,15 @@ namespace ChoiceBot.BotCommon
         {
             // for now. TODO: refactor out UserStream
             // instead of abstracting UserStream, I decided to use it for now.
-            if (_apiClient is MastoNetClient mastoClient) {
-                TimelineStreaming stream = mastoClient._client.GetUserStreaming();
-                stream.OnNotification += async (sender, e) =>
-                {
-                    Status status = e.Notification.Status;
-                    await _processStatus(status.ToCommon());
-                };
-                
-                await stream.Start();
-            }
-            else
+            IUserStreaming streaming = _apiClient.GetUserStreaming();
+            streaming.OnNoti += async (INoti noti) =>
             {
-                throw new NotSupportedException("Currently only MastoNet client will be supported");
-            }
+                if (noti.Note != null)
+                {
+                    await _processStatus(noti.Note);
+                }
+            };
+            await streaming.Start();
         }
 
         private async Task _processStatus(INote note)

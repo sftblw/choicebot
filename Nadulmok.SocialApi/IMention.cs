@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ChoiceBot.SocialApi
+﻿namespace Nadulmok.SocialApi
 {
     public interface IMention
     {

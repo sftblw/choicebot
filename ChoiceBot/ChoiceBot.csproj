@@ -14,9 +14,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mastonet" Version="1.7.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Mastonet" Version="1.8.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Ninject" Version="3.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="SocialApi" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nadulmok.SocialApi.MastoNet\Nadulmok.SocialApi.MastoNet.csproj" />
+    <ProjectReference Include="..\Nadulmok.SocialApi\Nadulmok.SocialApi.csproj" />
   </ItemGroup>
 
 </Project>

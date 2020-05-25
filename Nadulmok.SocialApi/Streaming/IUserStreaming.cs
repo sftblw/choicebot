@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace ChoiceBot.SocialApi.Streaming
+namespace Nadulmok.SocialApi.Streaming
 {
     public interface IUserStreaming
     {

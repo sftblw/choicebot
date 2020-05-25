@@ -5,9 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using ChoiceBot.ChoiceBotNS;
-using ChoiceBot.SocialApi;
 using Mastonet;
+using Nadulmok.SocialApi;
 using Visibility = Mastonet.Visibility;
 
 namespace ChoiceBot.BotCommon

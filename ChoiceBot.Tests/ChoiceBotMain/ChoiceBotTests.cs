@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using ChoiceBot.SocialApi;
 using NSubstitute;
 using NSubstitute.Core.Arguments;
 using Xunit;

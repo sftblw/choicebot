@@ -1,7 +1,6 @@
-﻿using System;
-using Mastonet.Entities;
+﻿using Mastonet.Entities;
 
-namespace ChoiceBot.SocialApi.MastoNetAdapter
+namespace Nadulmok.SocialApi.MastoNet
 {
     public class MastoNetMention: IMention
     {

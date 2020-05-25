@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using ChoiceBot.SocialApi.MastoNetAdapter.Streaming;
-using ChoiceBot.SocialApi.Streaming;
 using Mastonet;
+using Nadulmok.SocialApi.MastoNet.Streaming;
+using Nadulmok.SocialApi.Streaming;
 
-namespace ChoiceBot.SocialApi.MastoNetAdapter
+namespace Nadulmok.SocialApi.MastoNet
 {
     public class MastoNetClient: IApiClient
     {

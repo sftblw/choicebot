@@ -3,11 +3,7 @@ using System;
 using System.Threading.Tasks;
 using ChoiceBot.BotAccess;
 using ChoiceBot.BotCommon;
-using ChoiceBot.ChoiceBotMain;
-using ChoiceBot.ChoiceBotNS;
-using ChoiceBot.SocialApi;
-using ChoiceBot.SocialApi.MastoNetAdapter;
-using Visibility = Mastonet.Visibility;
+using Nadulmok.SocialApi.MastoNet;
 
 namespace ChoiceBot
 {

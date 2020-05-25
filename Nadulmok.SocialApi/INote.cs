@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ChoiceBot.SocialApi
+namespace Nadulmok.SocialApi
 {
     public interface INote
     {

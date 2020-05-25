@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChoiceBot.SocialApi;
-using ChoiceBot.SocialApi.MastoNetAdapter;
-using ChoiceBot.SocialApi.Streaming;
 using Mastonet;
 using Mastonet.Entities;
+using Nadulmok.SocialApi;
+using Nadulmok.SocialApi.Streaming;
 
 namespace ChoiceBot.BotCommon
 {

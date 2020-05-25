@@ -1,4 +1,4 @@
-﻿namespace ChoiceBot.SocialApi
+﻿namespace Nadulmok.SocialApi
 {
     public interface ICommonVisibility
     {

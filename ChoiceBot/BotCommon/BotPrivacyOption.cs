@@ -1,7 +1,7 @@
 ﻿using System;
-using ChoiceBot.SocialApi;
+using Nadulmok.SocialApi;
 
-namespace ChoiceBot.ChoiceBotNS
+namespace ChoiceBot.BotCommon
 {
     public class BotPrivacyOption
     {

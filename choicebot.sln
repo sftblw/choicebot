@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChoiceBot.Tests", "ChoiceBot.Tests\ChoiceBot.Tests.csproj", "{76DB97C6-4344-430D-9626-2368A8C7C8E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nadulmok.SocialApi", "Nadulmok.SocialApi\Nadulmok.SocialApi.csproj", "{88492E27-B33B-429A-9828-8AAC7D499820}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nadulmok.SocialApi.MastoNet", "Nadulmok.SocialApi.MastoNet\Nadulmok.SocialApi.MastoNet.csproj", "{F94C21BE-D02D-429A-B606-A3066C32E998}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +32,14 @@ Global
 		{76DB97C6-4344-430D-9626-2368A8C7C8E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76DB97C6-4344-430D-9626-2368A8C7C8E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76DB97C6-4344-430D-9626-2368A8C7C8E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88492E27-B33B-429A-9828-8AAC7D499820}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88492E27-B33B-429A-9828-8AAC7D499820}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88492E27-B33B-429A-9828-8AAC7D499820}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88492E27-B33B-429A-9828-8AAC7D499820}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F94C21BE-D02D-429A-B606-A3066C32E998}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F94C21BE-D02D-429A-B606-A3066C32E998}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F94C21BE-D02D-429A-B606-A3066C32E998}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F94C21BE-D02D-429A-B606-A3066C32E998}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

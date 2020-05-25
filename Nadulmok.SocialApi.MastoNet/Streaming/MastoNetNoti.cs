@@ -1,8 +1,7 @@
-﻿using System.Diagnostics;
-using ChoiceBot.SocialApi.Streaming;
-using Mastonet.Entities;
+﻿using Mastonet.Entities;
+using Nadulmok.SocialApi.Streaming;
 
-namespace ChoiceBot.SocialApi.MastoNetAdapter.Streaming
+namespace Nadulmok.SocialApi.MastoNet.Streaming
 {
     public class MastoNetNoti: INoti
     {

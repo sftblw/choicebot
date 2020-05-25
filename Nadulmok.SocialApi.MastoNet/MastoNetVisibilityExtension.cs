@@ -1,7 +1,6 @@
 ﻿using System;
-using Mastonet;
 
-namespace ChoiceBot.SocialApi.MastoNetAdapter
+namespace Nadulmok.SocialApi.MastoNet
 {
     public static class MastoNetVisibilityExtension
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ChoiceBot.BotCommon;
-using ChoiceBot.SocialApi;
+using Nadulmok.SocialApi;
 
 namespace ChoiceBot.ChoiceBotMain
 {

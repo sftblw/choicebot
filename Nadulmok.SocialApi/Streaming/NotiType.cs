@@ -1,4 +1,4 @@
-﻿namespace ChoiceBot.SocialApi.Streaming
+﻿namespace Nadulmok.SocialApi.Streaming
 {
     public enum NotiType
     {

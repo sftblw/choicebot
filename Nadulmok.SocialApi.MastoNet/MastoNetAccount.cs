@@ -1,6 +1,6 @@
 ﻿using Mastonet.Entities;
 
-namespace ChoiceBot.SocialApi.MastoNetAdapter
+namespace Nadulmok.SocialApi.MastoNet
 {
     public class MastoNetAccount: IAccount
     {

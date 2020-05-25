@@ -1,4 +1,4 @@
-﻿namespace ChoiceBot.ChoiceBotNS
+﻿namespace ChoiceBot.BotCommon
 {
     internal enum BotVisibilityLimit
     {

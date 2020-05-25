@@ -10,6 +10,7 @@
     <Version>0.1.0</Version>
     <LangVersion>8</LangVersion>
     <Nullable>enable</Nullable>
+    <RootNamespace>ChoiceBot</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ChoiceBot\ChoiceBot.csproj" />
+      <ProjectReference Include="..\ChoiceBot2\ChoiceBot2.csproj" />
     </ItemGroup>
 
 </Project>

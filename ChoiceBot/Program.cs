@@ -10,7 +10,7 @@ namespace ChoiceBot
     public static class Program
     {
         private static MastodonClient _client;
-        private const string ExceptionMessage = "[!] 예외가 발생하였습니다.\r\n@sftblw@twingyeo.kr";
+        private const string ExceptionMessage = "@sftblw@twingyeo.kr \n[!] 예외가 발생하였습니다.";
 
         public static void Main(string[] args)
         {
@@ -21,7 +21,7 @@ namespace ChoiceBot
         private static async void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Console.Error.WriteLine(e);
-            await _client.PostStatus(ExceptionMessage, Visibility.Unlisted);
+            await _client.PostStatus(ExceptionMessage + $"\n{e}", Visibility.Unlisted);
         }
 
         private static async Task Execute()

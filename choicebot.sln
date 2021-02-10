@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nadulmok.SocialApi", "Nadul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nadulmok.SocialApi.MastoNet", "Nadulmok.SocialApi.MastoNet\Nadulmok.SocialApi.MastoNet.csproj", "{F94C21BE-D02D-429A-B606-A3066C32E998}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mastonet", "Mastonet\Mastonet\Mastonet.csproj", "{F784FF5F-3ED0-4D5B-A7B9-89BB9256628C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{F94C21BE-D02D-429A-B606-A3066C32E998}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F94C21BE-D02D-429A-B606-A3066C32E998}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F94C21BE-D02D-429A-B606-A3066C32E998}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F784FF5F-3ED0-4D5B-A7B9-89BB9256628C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F784FF5F-3ED0-4D5B-A7B9-89BB9256628C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F784FF5F-3ED0-4D5B-A7B9-89BB9256628C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F784FF5F-3ED0-4D5B-A7B9-89BB9256628C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

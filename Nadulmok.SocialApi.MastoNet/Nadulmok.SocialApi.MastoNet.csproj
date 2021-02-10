@@ -5,11 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Mastonet\Mastonet\Mastonet.csproj" />
       <ProjectReference Include="..\Nadulmok.SocialApi\Nadulmok.SocialApi.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Mastonet" Version="1.8.1" />
     </ItemGroup>
 
 </Project>

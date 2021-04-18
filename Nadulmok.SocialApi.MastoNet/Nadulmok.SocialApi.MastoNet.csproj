@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
@@ -9,7 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Mastonet" Version="1.8.1" />
+      <PackageReference Include="Mastonet" Version="1.8.2" />
     </ItemGroup>
 
 </Project>

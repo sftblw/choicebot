@@ -3,9 +3,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ChoiceBot.BotCommon;
 using Nadulmok.SocialApi.Dummy;
-using Nadulmok.SocialApi.MastoNet;
-using NSubstitute;
-using NSubstitute.Core.Arguments;
 using Xunit;
 
 namespace ChoiceBot.Tests.ChoiceBotMainTests
@@ -50,7 +47,10 @@ namespace ChoiceBot.Tests.ChoiceBotMainTests
         [InlineData("@choicebot asdf vs gg", "asdf", "gg")]
         [InlineData("@choicebot asdf\ngg", "asdf", "gg")]
         [InlineData("@choicebot@example.com asdf\ngg", "asdf", "gg")]
+        [InlineData("asdf<br/>gg", "asdf", "gg")]
+        [InlineData("<p>asdf</p><p>gg</p>", "asdf", "gg")]
         [InlineData("asdf @choicebot@example.com gg", "asdf", "gg")]
+        [InlineData("<p>asdf</p><p>vs</p><p>gg</p>", "asdf", "gg")]
         [InlineData("@choicebot my\nawesome\nchoice\n\n\nvs\n\n\nmy\nanother\nchoice", "my\nawesome\nchoice", "my\nanother\nchoice")]
         [InlineData("\n\n\n\n\nmy\nawesome\nchoice\n\n\nvs\n\n\nmy\nanother\nchoice", "my\nawesome\nchoice", "my\nanother\nchoice")]
         public void Should_be_separated_by_vs(string body, params string[] results)

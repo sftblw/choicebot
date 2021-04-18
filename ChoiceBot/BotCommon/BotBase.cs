@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Mastonet;
 using Nadulmok.SocialApi;
-using Visibility = Mastonet.Visibility;
 
 namespace ChoiceBot.BotCommon
 {
@@ -56,7 +53,7 @@ namespace ChoiceBot.BotCommon
         private string _ToReplyText(INote status, string replyText)
         {
             IEnumerable<string> mentions = from mention in status.Mentions
-                               where !(mention.WebFinger == BotUserInfo.WebFinger
+                               where !(mention.WebFinger == BotUserInfo!.WebFinger
                                        || mention.WebFinger == status.Account.WebFinger)
                                select $"@{mention.WebFinger}";
 
@@ -89,13 +86,13 @@ namespace ChoiceBot.BotCommon
         {
             if (note?.Mentions?.Any(
                     mention =>
-                        mention.WebFinger == BotUserInfo.WebFinger
-                        && note.Account.WebFinger != BotUserInfo.WebFinger)
+                        mention.WebFinger == BotUserInfo!.WebFinger
+                        && note.Account.WebFinger != BotUserInfo!.WebFinger)
                 == true
             )
             {
                 await next();
-            };
+            }
         }
 
         protected async Task PipeFilterMentionByBot(INote note, Func<Task> next)
@@ -103,7 +100,7 @@ namespace ChoiceBot.BotCommon
             if (note.Account.IsBot != true)
             {
                 await next();
-            };
+            }
         }
 
         protected static async Task PipeRemoveHtml(INote note, Func<Task> next)
@@ -112,6 +109,7 @@ namespace ChoiceBot.BotCommon
             string statusText = note.Content;
             
             statusText = statusText.Replace("<br />", "\r\n").Replace("<br/>", "\r\n");
+            statusText = statusText.Replace("</p>", "\r\n").Replace("</ p>", "\r\n");
             statusText = new Regex("<[^>]*>").Replace(statusText, "");
             note.Content = statusText;
 

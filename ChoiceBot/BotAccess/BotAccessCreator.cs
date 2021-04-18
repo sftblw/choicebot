@@ -31,10 +31,19 @@ namespace ChoiceBot.BotAccess
                 {
                     Console.WriteLine("# Instance");
                     Console.Write("url: ");
-                    string url = Console.ReadLine()?.Trim();
-
+                    string? url = Console.ReadLine()?.Trim();
+                    if (string.IsNullOrEmpty(url))
+                    {
+                        throw new ArgumentNullException(url, "You typed empty instance URL.");
+                    }
+                    
                     Console.Write("app name: ");
-                    string appName = Console.ReadLine()?.Trim();
+                    string? appName = Console.ReadLine()?.Trim();
+                    if (string.IsNullOrEmpty(appName))
+                    {
+                        throw new ArgumentNullException(appName, "You typed empty app name");
+                    }
+                    
 
                     var authClient = new AuthenticationClient(url);
                     AppRegistration appRegistration = await authClient.CreateApp(appName, Scope.Read | Scope.Write | Scope.Follow);
@@ -62,7 +71,7 @@ namespace ChoiceBot.BotAccess
                     Console.WriteLine();
                     Console.Write("method : ");
 
-                    int method = int.Parse(Console.ReadLine()?.Trim());
+                    int method = int.Parse(Console.ReadLine()?.Trim() ?? "0");
                     if (method != 1 && method != 2) { throw new InvalidOperationException("wrong item selected! 1 or 2 please."); }
 
                     isLoginByUrl = method == 1;
@@ -86,11 +95,21 @@ namespace ChoiceBot.BotAccess
         private static async Task<Auth> _InteractiveLoginUrl(IAuthenticationClient authClient)
         {
             string url = authClient.OAuthUrl();
+            string? oauthCode = null;
+            while (true) {
+                Console.WriteLine($"Login with this url : {url}");
+                Console.Write("paste authorization token here :");
 
-            Console.WriteLine($"Login with this url : {url}");
-            Console.Write("paste authorization token here :");
+                oauthCode = Console.ReadLine()?.Trim();
+                if (string.IsNullOrEmpty(oauthCode))
+                {
+                    Console.WriteLine("You entered empty string");
+                    continue;
+                }
 
-            string oauthCode = Console.ReadLine()?.Trim();
+                break;
+            }
+            
             Auth auth = await authClient.ConnectWithCode(oauthCode);
 
             return auth;

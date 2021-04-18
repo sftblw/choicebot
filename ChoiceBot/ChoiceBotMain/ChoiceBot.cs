@@ -47,29 +47,33 @@ namespace ChoiceBot.ChoiceBotMain
             await ReplyTo(status, HelpText);
         }
 
-        private Dictionary<string, YesNoInfo>? pipeYesNoRegexByLang = null;
-
+        private List<YesNoInfo>? pipeYesNoRegex = null; // TODO: performance improvement
+        
         private class YesNoInfo
         {
-            public string Lang { get; set; }
-            public Regex Regex { get; set; }
-            public string Yes { get; set; }
-            public string No { get; set; }
+            public string Lang { get; set; } = null!;
+            public Regex Regex { get; set; } = null!;
+            public string Yes { get; set; } = null!;
+            public string No { get; set; } = null!;
         }
+        
         private async Task PipeYesNo(INote status, Func<Task> next)
         {
-            if (pipeYesNoRegexByLang == null)
+            if (pipeYesNoRegex == null)
             {
-                pipeYesNoRegexByLang = new List<YesNoInfo>()
+                pipeYesNoRegex = new List<YesNoInfo>()
                 {
-                    new YesNoInfo {
+                    new YesNoInfo
+                    {
                         Regex = new Regex("([예네](아니[요오]|아뇨|니[요오]))", RegexOptions.Compiled | RegexOptions.Multiline),
                         Lang = "kr",
                         Yes = "예",
                         No = "아니오"
                     },
-                    new YesNoInfo {
-                            Regex = new Regex("(yes|yeah)(no|nah)", RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase),
+                    new YesNoInfo
+                    {
+                        Regex = new Regex("(yes|yeah)(no|nah)",
+                            RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase),
                         Lang = "en",
                         Yes = "Yes",
                         No = "No"
@@ -81,10 +85,11 @@ namespace ChoiceBot.ChoiceBotMain
                         Yes = "はい",
                         No = "いいえ"
                     }
-                }.ToDictionary(item => item.Lang, item => item);
+                };
             }
-
-            YesNoInfo yni = pipeYesNoRegexByLang.FirstOrDefault(item => item.Value.Regex.IsMatch(status.Content)).Value;
+            
+            YesNoInfo? yni = pipeYesNoRegex.FirstOrDefault(item => item.Regex.IsMatch(status.Content));
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse // false positive
             if (yni == null)
             {
                 await next();

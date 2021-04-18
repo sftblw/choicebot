@@ -9,7 +9,7 @@ namespace ChoiceBot
 {
     public static class Program
     {
-        private static MastodonClient _client;
+        private static MastodonClient? _client;
         private const string ExceptionMessage = "[!] 예외가 발생하였습니다.\r\n@sftblw@twingyeo.kr";
 
         public static void Main(string[] args)
@@ -21,7 +21,7 @@ namespace ChoiceBot
         private static async void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Console.Error.WriteLine(e);
-            await _client.PostStatus(ExceptionMessage, Visibility.Unlisted);
+            await _client!.PostStatus(ExceptionMessage, Visibility.Unlisted);
         }
 
         private static async Task Execute()
@@ -49,13 +49,13 @@ namespace ChoiceBot
 
             var persistent = new BotAccessPersistent(clientPath);
 
-            MastodonClient preparedClient = (await persistent.Load())?.AsMastodonClient();
+            MastodonClient? preparedClient = (await persistent.Load())?.AsMastodonClient();
 
             if (preparedClient == null) {
                 BotAccess.BotAccess access = await BotAccessCreator.InteractiveConsoleRegister();
-                if (access != null) { await persistent.Save(access); }
+                await persistent.Save(access);
 
-                preparedClient = access?.AsMastodonClient();
+                preparedClient = access.AsMastodonClient();
             }
 
             if (preparedClient == null) { throw new Exception("client is null. somehow failed to create mastodon client."); }

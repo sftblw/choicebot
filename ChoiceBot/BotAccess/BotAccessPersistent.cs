@@ -14,14 +14,14 @@ namespace ChoiceBot.BotAccess
         public BotAccessPersistent(string persistentPath)
         {
             _path = persistentPath;
-            if (Path.GetFileName(_path) == null) { throw new ArgumentException("path is invalid"); }
+            if (string.IsNullOrEmpty(Path.GetFileName(_path))) { throw new ArgumentException("path is invalid"); }
 
             if (File.Exists(_path)) return;
             Directory.CreateDirectory(Path.GetDirectoryName(_path));
             File.Create(_path).Dispose();
         }
 
-        public async Task<BotAccess> Load()
+        public async Task<BotAccess?> Load()
         {
             if (!File.Exists(_path)) { return null; }
             

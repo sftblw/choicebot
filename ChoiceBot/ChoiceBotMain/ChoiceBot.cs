@@ -47,7 +47,7 @@ namespace ChoiceBot.ChoiceBotMain
             await ReplyTo(status, HelpText);
         }
 
-        private Dictionary<string, YesNoInfo> pipeYesNoRegexByLang = null;
+        private Dictionary<string, YesNoInfo>? pipeYesNoRegexByLang = null;
 
         private class YesNoInfo
         {

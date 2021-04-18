@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ChoiceBot\ChoiceBot.csproj" />
+      <ProjectReference Include="..\Nadulmok.SocialApi.Dummy\Nadulmok.SocialApi.Dummy.csproj" />
     </ItemGroup>
 
 </Project>

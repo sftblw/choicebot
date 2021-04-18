@@ -33,13 +33,16 @@ namespace ChoiceBot.BotCommon
             {
                 if (noti.Note != null)
                 {
-                    await _processStatus(noti.Note);
+                    await ProcessStatus(noti.Note);
                 }
             };
             await streaming.Start();
         }
 
-        private async Task _processStatus(INote note)
+        /** Process incoming notes with note.
+         * Can be manually called for testing or queued processing (second is not implemented yet)
+         */
+        public async Task ProcessStatus(INote note)
         {
             foreach (var process in _processors)
             {

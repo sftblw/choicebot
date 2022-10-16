@@ -1,8 +1,7 @@
 # project specific
 
-choicebot/bin
-choicebot/serve
-choicebot/.config
+serve
+serve/.config
 
 # vscode
 .vscode
